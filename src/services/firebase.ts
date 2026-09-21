@@ -1,5 +1,5 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { FirebaseApp, getApp, getApps, initializeApp } from 'firebase/app';
+import { Firestore, getFirestore, initializeFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -8,8 +8,20 @@ const firebaseConfig = {
   storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-const app = initializeApp(firebaseConfig);
+let app: FirebaseApp;
+let db: Firestore;
 
-export const db = getFirestore(app);
+if (!getApps().length) {
+  app = initializeApp(firebaseConfig);
+  db = initializeFirestore(app, {
+    experimentalForceLongPolling: true,
+  });
+} else {
+  app = getApp();
+  db = getFirestore(app);
+}
+
+export { db };

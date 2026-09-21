@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-
 import { colors } from '../constants/COLORS';
 
 export const styles = StyleSheet.create({
@@ -52,13 +51,15 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     marginLeft: 8,
   },
-  mealCard: {
+mealCard: {
     backgroundColor: colors.white,
     padding: 16,
     borderRadius: 18,
     borderWidth: 1,
     borderColor: '#dfe6ef',
     marginBottom: 18,
+    alignSelf: 'center',
+    maxWidth: '100%',
   },
   mealHeader: {
     flexDirection: 'row',
@@ -72,12 +73,23 @@ export const styles = StyleSheet.create({
     color: colors.primaryDark,
   },
   tableWrapper: {
+    flexDirection: 'row',
     borderWidth: 1,
     borderColor: '#d8e0eb',
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: '#f8f9fb',
-    minWidth: 720,
+  },
+  fixedColumn: {
+    backgroundColor: '#f8f9fb',
+    borderRightWidth: 1,
+    borderRightColor: '#d8e0eb',
+    zIndex: 10,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 3, height: 0 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
   },
   tableHeaderRow: {
     flexDirection: 'row',
@@ -86,17 +98,12 @@ export const styles = StyleSheet.create({
     borderBottomColor: '#d8e0eb',
   },
   labelHeaderCell: {
-    width: 170,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderRightWidth: 1,
-    borderRightColor: '#d8e0eb',
+    width: 95, 
+    height: 44,
   },
   dayHeaderCell: {
-    flex: 1,
-    minWidth: 110,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
+    width: 140,
+    height: 44,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 1,
@@ -114,21 +121,20 @@ export const styles = StyleSheet.create({
     borderBottomColor: '#d8e0eb',
   },
   labelCell: {
-    width: 170,
-    padding: 10,
+    width: 95, 
+    height: 100,
+    paddingHorizontal: 8,
     backgroundColor: '#f8f9fb',
-    borderRightWidth: 1,
-    borderRightColor: '#d8e0eb',
     justifyContent: 'center',
   },
   labelText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
     color: colors.primaryDark,
   },
   mealCell: {
-    flex: 1,
-    minWidth: 110,
+    width: 140, 
+    height: 100,
     paddingHorizontal: 6,
     paddingVertical: 10,
     borderRightWidth: 1,
@@ -137,16 +143,16 @@ export const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   cellContent: {
-    minHeight: 56,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   mealText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '600',
     color: colors.text,
     textAlign: 'center',
-    lineHeight: 16,
+    lineHeight: 14,
     marginBottom: 8,
   },
   allergenRow: {
@@ -239,7 +245,7 @@ export const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    zIndex: 999, // Garante que fica por cima de tudo
+    zIndex: 999,
     flexDirection: 'row',
   },
   overlayBackground: {

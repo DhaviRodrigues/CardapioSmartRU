@@ -4,8 +4,8 @@ import { doc, getDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 
-import { db } from '../services/firebase';
 import { colors } from '../constants/COLORS';
+import { db } from '../services/firebase';
 import { styles } from '../styles/CardapioStyles';
 
 const weekDays = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira'];
@@ -25,62 +25,77 @@ function MenuMeal({ meal }: { meal: any }) {
       </View>
 
       <View style={styles.tableWrapper}>
-        <View style={styles.tableHeaderRow}>
+        {/* COLUNA ESQUERDA FIXA */}
+        <View style={styles.fixedColumn}>
           <View style={styles.labelHeaderCell} />
-          {weekDays.map((day) => (
-            <View key={`${meal.type}-${day}`} style={styles.dayHeaderCell}>
-              <Text style={styles.dayHeaderText}>{day}</Text>
+          {meal.rows.map((row: any, rowIndex: number) => (
+            <View key={`fixed-${meal.type}-${rowIndex}`} style={styles.labelCell}>
+              <Text style={styles.labelText}>{row.label}</Text>
             </View>
           ))}
         </View>
 
-        {meal.rows.map((row: any, rowIndex: number) => (
-          <View key={`${meal.type}-${row.label}-${rowIndex}`} style={styles.tableRow}>
-            <View style={styles.labelCell}>
-              <Text style={styles.labelText}>{row.label}</Text>
+        {/* COLUNAS DIREITAS COM SCROLL */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} bounces={false}>
+          <View>
+            <View style={styles.tableHeaderRow}>
+              {weekDays.map((day) => (
+                <View key={`${meal.type}-${day}`} style={styles.dayHeaderCell}>
+                  <Text style={styles.dayHeaderText}>{day}</Text>
+                </View>
+              ))}
             </View>
 
-            {row.cells.map((cell: any, index: number) => {
-              const key = `${meal.type}-${row.label}-${index}`;
-              const isFavorite = !!favoriteMap[key];
-              const allergens = Array.isArray(cell.allergens) ? cell.allergens : [];
+            {meal.rows.map((row: any, rowIndex: number) => (
+              <View key={`scroll-${meal.type}-${rowIndex}`} style={styles.tableRow}>
+                {row.cells.map((cell: any, index: number) => {
+                  const key = `${meal.type}-${row.label}-${index}`;
+                  const isFavorite = !!favoriteMap[key];
+                  const allergens = Array.isArray(cell.allergens) ? cell.allergens : [];
 
-              return (
-                <View key={key} style={styles.mealCell}>
-                  <View style={styles.cellContent}>
-                    <Text style={styles.mealText}>{cell.name}</Text>
+                  return (
+                    <View key={key} style={styles.mealCell}>
+                      <View style={styles.cellContent}>
+                        {/* numberOfLines previne que textos gigantes estraguem a altura */}
+                        <Text style={styles.mealText} numberOfLines={5}>
+                          {cell.name}
+                        </Text>
 
-                    <View style={styles.allergenRow}>
-                      {allergens.map((item: string) => (
-                        <View
-                          key={`${key}-${item}`}
-                          style={[
-                            styles.allergenBadge,
-                            item === 'leite' ? styles.leiteBadge : styles.ovoBadge,
-                          ]}
-                        >
-                          <Text style={styles.allergenText}>{item === 'leite' ? 'L' : 'O'}</Text>
+                        <View style={styles.allergenRow}>
+                          {allergens.map((item: string) => (
+                            <View
+                              key={`${key}-${item}`}
+                              style={[
+                                styles.allergenBadge,
+                                item.toLowerCase().includes('leite') ? styles.leiteBadge : styles.ovoBadge,
+                              ]}
+                            >
+                              <Text style={styles.allergenText}>
+                                {item.toLowerCase().includes('leite') ? 'L' : 'O'}
+                              </Text>
+                            </View>
+                          ))}
                         </View>
-                      ))}
-                    </View>
-                  </View>
+                      </View>
 
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    onPress={() => toggleFavorite(key)}
-                    style={styles.favoriteButton}
-                  >
-                    <Ionicons
-                      name={isFavorite ? 'heart' : 'heart-outline'}
-                      size={14}
-                      color={isFavorite ? '#ff5a5f' : '#7b8393'}
-                    />
-                  </TouchableOpacity>
-                </View>
-              );
-            })}
+                      <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => toggleFavorite(key)}
+                        style={styles.favoriteButton}
+                      >
+                        <Ionicons
+                          name={isFavorite ? 'heart' : 'heart-outline'}
+                          size={14}
+                          color={isFavorite ? '#ff5a5f' : '#7b8393'}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  );
+                })}
+              </View>
+            ))}
           </View>
-        ))}
+        </ScrollView>
       </View>
 
       <View style={styles.footer}>
@@ -166,14 +181,6 @@ export default function CardapioScreen() {
               <Text style={styles.subtitle}>Confira as refeições disponíveis esta semana</Text>
             </View>
 
-            <TouchableOpacity 
-              style={styles.updateButton} 
-              activeOpacity={0.8}
-              onPress={fetchCardapio} 
-            >
-              <Ionicons name="refresh-outline" size={18} color={colors.primary} />
-              <Text style={styles.updateButtonText}>Atualizar cardápio</Text>
-            </TouchableOpacity>
           </View>
 
           {isLoading ? (
